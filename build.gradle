@@ -1,6 +1,7 @@
 buildscript {
     dependencies {
         classpath 'com.h2database:h2:1.4.191'
+        classpath 'com.github.rholder:gradle-one-jar:1.0.3'
     }
 }
 
@@ -9,17 +10,26 @@ plugins {
     id "org.flywaydb.flyway" version "4.0.3"
 }
 
-group 'net.ctwatch'
-version '1.0-SNAPSHOT'
-
 apply plugin: "net.ltgt.apt"
 apply plugin: 'java'
+apply plugin: 'gradle-one-jar'
+apply plugin: 'application'
 apply plugin: 'idea'
+
+
+
+
+
+mainClassName = "net.ctwatch.Main"
+
+group 'net.ctwatch'
+version '1.0-SNAPSHOT'
 
 flyway {
     url = 'jdbc:h2:file:./target/foobar'
     user = 'sa'
 }
+
 
 sourceCompatibility = 1.8
 
@@ -39,3 +49,10 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
+task oneJar(type: OneJar) {
+    mainClass = mainClassName
+}
+
+artifacts {
+    oneJar
+}

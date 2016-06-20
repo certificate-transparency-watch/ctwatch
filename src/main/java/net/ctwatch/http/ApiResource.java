@@ -10,7 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.xml.stream.XMLStreamException;
 
-@Path("/")
+@Path("/domain")
 @Produces(MediaType.APPLICATION_ATOM_XML)
 public class ApiResource {
     private final Db db;
@@ -20,7 +20,7 @@ public class ApiResource {
     }
 
     @GET
-    @Path("/domain/{domain}")
+    @Path("/{domain}")
     public String fetch(@PathParam("domain") String domain) throws XMLStreamException {
         InternetDomainName domainName = InternetDomainName.from(domain);
         if (domainName.isPublicSuffix()) {

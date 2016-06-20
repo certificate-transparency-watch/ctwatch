@@ -4,6 +4,7 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;
 import net.ctwatch.db.Db;
 import net.ctwatch.http.ApiResource;
+import net.ctwatch.http.WebsiteResource;
 import net.ctwatch.job.SyncLogEntries;
 import net.ctwatch.logServerApi.LogServerService;
 import net.ctwatch.utils.GuavaUtils;
@@ -26,6 +27,7 @@ public class Main extends Application<CtWatchConfiguration> {
         LogServerService logServerService = retrofit.create(LogServerService.class);
         environment.lifecycle().manage(GuavaUtils.fromService(new SyncLogEntries(logServerService, db)));
         environment.jersey().register(apiResource);
+        environment.jersey().register(new WebsiteResource());
     }
 
     @Override
