@@ -1,0 +1,41 @@
+buildscript {
+    dependencies {
+        classpath 'com.h2database:h2:1.4.191'
+    }
+}
+
+plugins {
+    id "net.ltgt.apt" version "0.6"
+    id "org.flywaydb.flyway" version "4.0.3"
+}
+
+group 'net.ctwatch'
+version '1.0-SNAPSHOT'
+
+apply plugin: "net.ltgt.apt"
+apply plugin: 'java'
+apply plugin: 'idea'
+
+flyway {
+    url = 'jdbc:h2:file:./target/foobar'
+    user = 'sa'
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'io.dropwizard:dropwizard-core:1.0.0-rc3'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-jackson:2.1.0'
+    compile 'org.bouncycastle:bcprov-jdk14:1.54'
+    compile 'org.bouncycastle:bcmail-jdk14:1.54'
+    compile 'io.netty:netty-buffer:4.0.37.Final'
+    compileOnly 'com.google.auto.value:auto-value:1.2'
+    apt 'com.google.auto.value:auto-value:1.2'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
