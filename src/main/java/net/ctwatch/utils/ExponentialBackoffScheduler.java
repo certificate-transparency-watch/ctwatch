@@ -1,5 +1,6 @@
 package net.ctwatch.utils;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +23,12 @@ public class ExponentialBackoffScheduler extends AbstractScheduledService.Custom
     }
 
     protected Schedule getNextSchedule() throws Exception {
-        Duration duration = currentDuration.get();
+        Duration duration = getNextScheduleDuration();
         return new Schedule(duration.toMillis(), TimeUnit.MILLISECONDS);
+    }
+
+    @VisibleForTesting  Duration getNextScheduleDuration() {
+        return currentDuration.get();
     }
 
     public void onJobCompletion(JobStatus jobStatus) {
@@ -34,7 +39,7 @@ public class ExponentialBackoffScheduler extends AbstractScheduledService.Custom
                 nextDuration = initialDuration;
                 break;
             case FAILURE:
-                nextDuration = max(duration.multipliedBy(2), maxDuration);
+                nextDuration = min(duration.multipliedBy(2), maxDuration);
                 break;
             default:
                 throw new AssertionError();
@@ -42,14 +47,14 @@ public class ExponentialBackoffScheduler extends AbstractScheduledService.Custom
         currentDuration.set(nextDuration);
     }
 
-    private static <T extends Comparable<? super T>> T max(T a, T b) {
+    private static <T extends Comparable<? super T>> T min(T a, T b) {
         if (a == null) {
             if (b == null) return a;
             else return b;
         }
         if (b == null)
             return a;
-        return a.compareTo(b) > 0 ? a : b;
+        return a.compareTo(b) < 0 ? a : b;
     }
 
     public enum JobStatus {
